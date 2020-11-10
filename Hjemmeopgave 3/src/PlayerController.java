@@ -1,5 +1,6 @@
 import java.util.Scanner;
 
+// Controller which is directly controlled by the player through the console
 public class PlayerController extends Controller
 {
 	private static Scanner scanner = new Scanner(System.in);

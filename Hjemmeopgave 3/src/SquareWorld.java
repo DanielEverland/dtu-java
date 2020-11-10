@@ -4,12 +4,13 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Line2D.Float;
 import java.util.Random;
 
+// A type of world which is completely square
 public class SquareWorld extends WorldBase
 {
-	private final static int MAX_BOUNDS_WIDTH = 15;
-	private final static int MIN_BOUNDS_WIDTH = 5;
-	private final static int MAX_DISTANCE_TO_CENTER_SQUARE = 8;
-	private final static int MIN_DISTANCE_TO_CENTER_SQUARE = 3;
+	private final static int MAX_BOUNDS_WIDTH = 60;
+	private final static int MIN_BOUNDS_WIDTH = 30;
+	private final static int MAX_DISTANCE_TO_CENTER_SQUARE = 10;
+	private final static int MIN_DISTANCE_TO_CENTER_SQUARE = 6;
 	
 	private Random rand;
 	
@@ -54,7 +55,7 @@ public class SquareWorld extends WorldBase
 		// If we're within the center square when moving to right, we need to move all the way to the right of the entire center square
 		if(centerSquare.contains(currentIteratorPoint))
 		{
-			currentIteratorPoint = new Point2D.Float(centerSquare.x + centerSquare.width + 1, currentY);
+			currentIteratorPoint = new Point2D.Float(centerSquare.x + centerSquare.width, currentY);
 			return currentIteratorPoint;
 		}		
 		
@@ -62,7 +63,7 @@ public class SquareWorld extends WorldBase
 		if(exists(currentIteratorPoint))
 			return currentIteratorPoint;
 		
-		// Try moving down one row
+		// Try moving up one row
 		currentIteratorPoint = new Point2D.Float(0, currentY + 1);
 		if(exists(currentIteratorPoint))
 			return currentIteratorPoint;
@@ -70,6 +71,11 @@ public class SquareWorld extends WorldBase
 		// There are no other possible options, we must have iterated over the entire world at this point.
 		currentIteratorPoint = null;
 		return currentIteratorPoint;
+	}
+	
+	public Point2D.Float getBounds()
+	{
+		return new Point2D.Float(bounds.x, bounds.y);
 	}
 	
 	public FinishLineCrossType crossedFinishLine(Car movingCar, Point2D.Float startingPoint, Point2D.Float endPoint)
@@ -80,7 +86,7 @@ public class SquareWorld extends WorldBase
 		if(move.intersectsLine(finishLine))
 		{
 			int xDirection = (int)(endPoint.x - startingPoint.x);
-			if(xDirection > 0 && finishLine.ptLineDist(endPoint) < 1 && finishLine.ptLineDist(endPoint) < 1)
+			if(xDirection > 0 && finishLine.ptLineDist(startingPoint) > 0.9f)
 			{
 				return FinishLineCrossType.RightWay;
 			}
@@ -95,8 +101,13 @@ public class SquareWorld extends WorldBase
 	
 	public boolean isValidMove(Car movingCar, Point2D.Float startingPoint, Point2D.Float endPoint)
 	{
-		Line2D.Float move = new Line2D.Float(startingPoint, endPoint);		
-		return exists(endPoint) && !hitsAnyCar(movingCar, startingPoint, endPoint) && !centerSquare.intersectsLine(move); 
+		Line2D.Float move = new Line2D.Float(startingPoint, endPoint);
+		return exists(endPoint) && !hitsAnyCar(movingCar, startingPoint, endPoint) && !centerSquare.intersectsLine(move) && !hitBounds(endPoint);
+	}
+	
+	private boolean hitBounds(Point2D.Float endPoint)
+	{
+		return endPoint.x == 0 || endPoint.x == bounds.x || endPoint.y == 0 || endPoint.y == bounds.y;
 	}
 	
 	private boolean hitsAnyCar(Car movingCar, Point2D.Float startingPoint, Point2D.Float endPoint)
@@ -123,7 +134,6 @@ public class SquareWorld extends WorldBase
 	
 	public boolean exists(Point2D.Float point)
 	{
-		//Rectangle test = new Rectangle(centerSquare.x + 1, centerSquare.y, centerSquare.width + 1, centerSquare.height);
 		// If the point is within the center square, it's out of bounds
 		if(centerSquare.contains(point))
 			return false;
@@ -142,10 +152,6 @@ public class SquareWorld extends WorldBase
 	private void createBounds()
 	{
 		int boundsSize = MIN_BOUNDS_WIDTH + rand.nextInt(MAX_BOUNDS_WIDTH - MIN_BOUNDS_WIDTH);
-		boundsSize = 16;
-		
-		if(boundsSize % 2 == 0)
-			boundsSize++;
 		
 		bounds = new Point2D.Float(boundsSize, boundsSize);
 	}

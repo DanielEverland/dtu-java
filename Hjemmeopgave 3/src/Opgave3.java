@@ -33,7 +33,7 @@ public class Opgave3
 			
 			System.out.println("Thanks for playing! Press any button to play again.\n");
 			scanner.nextLine();
-		}	
+		}
 	}
 	
 	private static WorldBase getWorld()

@@ -1,6 +1,7 @@
 import java.awt.geom.Point2D;
 import java.awt.Color;
 
+// Responsible for moving the car around in the world
 public class Car extends GameObject
 {
 	public Color CarColor;
@@ -17,6 +18,7 @@ public class Car extends GameObject
 		notifyWorldOfPosition();
 	}
 	
+	// Moves the car and checks whether it crashed or crossed the finish line.
 	public void move(Point2D.Float direction)
 	{
 		Point2D.Float oldPosition = Position;
@@ -40,6 +42,7 @@ public class Car extends GameObject
 		notifyWorldOfPosition();
 	}
 	
+	// Tells the world object that the car has moved to a new position
 	private void notifyWorldOfPosition()
 	{
 		World.addCarLocation(this);

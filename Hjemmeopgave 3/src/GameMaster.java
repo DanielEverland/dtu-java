@@ -96,23 +96,26 @@ public abstract class GameMaster
 		System.out.println("No cars have finished! The game is lost.");
 		
 		printTurnsTaken();
-		gameIsOver = true;		
+		gameIsOver = true;
 	}
 	
 	// Returns the controller which is next in the list of all controllers
 	private Controller getNextController(Controller entry)
 	{
-		int startIndex = controllers.indexOf(entry);
-		int index = startIndex + 1;
-		while(index != startIndex)
+		int startIndex = controllers.indexOf(entry) + 1;
+		int index = startIndex;
+		do
 		{
-			if(index >= controllers.size() - 1)
+			if(index >= controllers.size())
 				index = 0;
 			
-			Controller currentController = controllers.get(index); 
+			Controller currentController = controllers.get(index);
 			if(currentController.getIsActive())
 				return currentController;
+			
+			index++;
 		}
+		while(index != startIndex);
 		
 		gameLost(entry);
 		return null;

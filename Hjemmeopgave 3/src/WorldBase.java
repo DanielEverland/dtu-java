@@ -9,14 +9,17 @@ public abstract class WorldBase
 	public Hashtable<Car, ArrayList<Point2D.Float>> CarLocations = new Hashtable<Car, ArrayList<Point2D.Float>>(); 
 	
 	private ArrayList<Point2D.Float> usedStartingLocations = new ArrayList<Point2D.Float>();
-		
+	
+	// Gets the bounds of the world
+	public abstract Point2D.Float getBounds();
+	
 	// Resets the iterator in order to prepare for iteration over the entire world.
 	public abstract void beginIterating();
 	
 	// Gets the next point in the world, if any. Null if iteration has completed.
 	public abstract Point2D.Float getNext();
 	
-	// Gets the finish line for this world (also used for starting)
+	// Gets the finish line for this world (also used for starting). P1 must be lowest point and P2 must be highest point.
 	public abstract Line2D.Float getFinishLine();
 	
 	// Returns whether the given point exists in this world.
@@ -45,8 +48,8 @@ public abstract class WorldBase
 		Line2D.Float finishLine = getFinishLine();
 		ArrayList<Point2D.Float> allPossiblePositions = new ArrayList<Point2D.Float>();
 		
-		Point2D.Float currentLinePosition = (Point2D.Float)finishLine.getP1();
-		Point2D.Float endPosition = (Point2D.Float)finishLine.getP2();
+		Point2D.Float currentLinePosition = new Point2D.Float((float)finishLine.getP1().getX(), (float)finishLine.getP1().getY() + 1);
+		Point2D.Float endPosition = new Point2D.Float((float)finishLine.getP2().getX(), (float)finishLine.getP2().getY() - 1);
 		
 		allPossiblePositions.add(currentLinePosition);
 		while(currentLinePosition.x != endPosition.x || currentLinePosition.y != endPosition.y)

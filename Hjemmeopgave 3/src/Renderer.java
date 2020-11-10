@@ -4,17 +4,18 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Map;
 
+// Draws objects in the window
 public class Renderer
 {
 	private static final int CELL_SIZE = 16;
-	private static final int VIEWPORT_SIZE = 900;
-	private static final float VIEWPORT_CELL_HALFSIZE = (float)CELL_SIZE / VIEWPORT_SIZE / 2.f;
 	private static final Color COLOR_CELL_BACKGROUND = StdDraw.GRAY;
 	private static final Color COLOR_CELL_OUTLINE = StdDraw.BLACK;
 	private static final Color FINISHLINE_COLOR = StdDraw.GREEN;
 	private static final float LINE_RADIUS = 0.01f;
 	private static final Color COLOR_CAR = StdDraw.BLACK;
-	private static final float CAR_RADIUS = 0.005f;
+	private static final float CAR_RADIUS = 0.6f;
+	
+	private static int viewportSize;
 	
 	// Draws the entire world to the canvas.
 	public static void drawWorld(WorldBase world)
@@ -22,7 +23,11 @@ public class Renderer
 		world.beginIterating();
 		Point2D.Float currentPoint = world.getNext();
 		
-		StdDraw.setCanvasSize(VIEWPORT_SIZE, VIEWPORT_SIZE);
+		int worldBoundsX = (int)world.getBounds().x;
+		int worldBoundsY = (int)world.getBounds().y;
+		viewportSize = (worldBoundsX > worldBoundsY ? worldBoundsX : worldBoundsY) * CELL_SIZE;
+		
+		StdDraw.setCanvasSize(viewportSize, viewportSize);
 		StdDraw.enableDoubleBuffering();
 		
 		while(currentPoint != null)
@@ -53,7 +58,7 @@ public class Renderer
 		{
 			for(int i = 0; i < entry.getValue().size(); i++)
 			{
-				StdDraw.filledCircle(coordinateToViewport(entry.getValue().get(i).x), coordinateToViewport(entry.getValue().get(i).y), CAR_RADIUS);
+				StdDraw.filledCircle(coordinateToViewport(entry.getValue().get(i).x), coordinateToViewport(entry.getValue().get(i).y), CAR_RADIUS * getViewportCellHalfSize());
 			}			
 		}
 	}
@@ -80,10 +85,10 @@ public class Renderer
 		Point2D.Float viewportPos = pointToViewport(point);
 		
 		StdDraw.setPenColor(COLOR_CELL_BACKGROUND);
-		StdDraw.filledSquare(viewportPos.getX() + VIEWPORT_CELL_HALFSIZE, viewportPos.getY() + VIEWPORT_CELL_HALFSIZE, VIEWPORT_CELL_HALFSIZE);
+		StdDraw.filledSquare(viewportPos.getX() + getViewportCellHalfSize(), viewportPos.getY() + getViewportCellHalfSize(), getViewportCellHalfSize());
 		
 		StdDraw.setPenColor(COLOR_CELL_OUTLINE);
-		StdDraw.square(viewportPos.getX() + VIEWPORT_CELL_HALFSIZE, viewportPos.getY() + VIEWPORT_CELL_HALFSIZE, VIEWPORT_CELL_HALFSIZE);
+		StdDraw.square(viewportPos.getX() + getViewportCellHalfSize(), viewportPos.getY() + getViewportCellHalfSize(), getViewportCellHalfSize());
 	}
 	
 	private static void drawFinishLine(Line2D.Float finishLine)
@@ -101,9 +106,14 @@ public class Renderer
 		return new Point2D.Float(coordinateToViewport(point.getX()), coordinateToViewport(point.getY()));
 	}
 	
+	private static float getViewportCellHalfSize()
+	{
+		return (float)CELL_SIZE / viewportSize / 2.f;		
+	}
+	
 	// Converts a singular coordinate to viewport space
 	private static float coordinateToViewport(double coordinate)
 	{
-		return (float)coordinate * CELL_SIZE / VIEWPORT_SIZE;
+		return (float)coordinate * CELL_SIZE / viewportSize;
 	}
 }

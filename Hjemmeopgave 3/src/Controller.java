@@ -1,5 +1,6 @@
 import java.awt.geom.Point2D;
 
+// Base class for controlling a car
 public abstract class Controller
 {
 	public Controller(GameMaster gameMaster, String name, Car toControl)
@@ -9,6 +10,7 @@ public abstract class Controller
 		this.controllingCar = toControl;
 	}
 	
+	// Name of the player
 	public final String Name;
 	
 	private final GameMaster gameMaster;
