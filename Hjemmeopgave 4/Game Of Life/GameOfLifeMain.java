@@ -6,13 +6,13 @@ import java.util.ArrayList;
 
 public class GameOfLifeMain
 {
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		StdDraw.setCanvasSize(CANVAS_WIDTH, CANVAS_HEIGHT);
 		StdDraw.enableDoubleBuffering();
 		
 		try
 		{
+			// Attempt to read from file. If that fails, defer to a randomly created GameOfLife
 			readFromFile();
 			return;
 		}
@@ -23,28 +23,29 @@ public class GameOfLifeMain
 		initialize(new GameOfLife(50));
 	}
 	
+	// Change this in order to change the "speed" of the game.
+	private static final int DRAW_INTERVAL = 500;
 	private static final int CANVAS_WIDTH = 1000;
 	private static final int CANVAS_HEIGHT = 1000;
-	private static final int DRAW_INTERVAL = 100;
 	private static final Color COLOR_ALIVE = StdDraw.BLACK;
 	
 	private static GameOfLife currentGame;
 	private static int xBounds;
 	private static int yBounds;
 	private static float circleRadius;
-	private static float circleDiameter;
 	
-	private static void initialize(GameOfLife newGame)
-	{
+	private static void initialize(GameOfLife newGame) {
 		currentGame = newGame;
+		
+		// These values are simply used in order to properly scale drawing to fit the viewport of the window
 		calculateBounds();
 		calculateRadius();
 		
 		show();
 	}
 	
-	private static void show()
-	{
+	private static void show() {
+		// Run the game forever
 		while(true)
 		{
 			clearCanvas();
@@ -64,12 +65,11 @@ public class GameOfLifeMain
 			StdDraw.show();
 			StdDraw.pause(DRAW_INTERVAL);
 
-			//currentGame.nextState();
+			currentGame.nextState();
 		}
 	}
 	
-	private static void readFromFile() throws FileNotFoundException
-	{
+	private static void readFromFile() throws FileNotFoundException {
 		System.out.println("Please input a full path for an input file, or simply press enter to play a random game");
 		
 		Scanner consoleInput = new Scanner(System.in);
@@ -79,6 +79,8 @@ public class GameOfLifeMain
 		File inputFile = new File(inputFilePath);
 		Scanner inputFileScanner = new Scanner(inputFile);
 		
+		// We can't know for certain how big the GameOfLife read from a file is, so store it in this
+		// pre-defined array, while we're reading.
 		int[][] inputBuffer = new int[100][100];
 		int width = 0, height = 0;
 		
@@ -91,6 +93,8 @@ public class GameOfLifeMain
 				char nextChar = nextString.charAt(i);
 				try
 				{
+					// If it's not an integer this will throw an exception. It's caught, so that's fine,
+					// the program will simply move on.
 					int number = Integer.parseInt(String.valueOf(nextChar));
 					if(number == 1 || number == 0)
 					{
@@ -123,8 +127,7 @@ public class GameOfLifeMain
 		initialize(new GameOfLife(actualInput));
 	}
 	
-	private static void calculateBounds()
-	{
+	private static void calculateBounds() {
 		yBounds = currentGame.State.length;
 		xBounds = 0;
 		
@@ -136,21 +139,17 @@ public class GameOfLifeMain
 		}
 	}
 	
-	private static void calculateRadius()
-	{
+	private static void calculateRadius() {
 		int smallestBounds = xBounds < yBounds ? xBounds : yBounds;
 		
 		circleRadius = (1.0f / smallestBounds) / 2;
-		circleDiameter = circleRadius * 2;
 	}
 	
-	private static void clearCanvas()
-	{
+	private static void clearCanvas() {
 		StdDraw.clear();
 	}
 	
-	private static void drawCell(int x, int y)
-	{
+	private static void drawCell(int x, int y) {
 		float viewportX = (float)x / xBounds + circleRadius;
 		
 		// Drawing is inverted because the "start" of the array is supposed to be

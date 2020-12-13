@@ -138,7 +138,6 @@ public class Mandelbrot
 	{
 		StdDraw.setCanvasSize(VIEWPORT_SIZE, VIEWPORT_SIZE);
 		StdDraw.enableDoubleBuffering();
-		StdDraw.setPenColor(Color.RED);
 		
 		radius = (1 / (float)GRID_SIZE) / 2;
 	}

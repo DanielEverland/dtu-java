@@ -2,8 +2,8 @@ import java.util.Random;
 
 public class GameOfLife
 {
-	public GameOfLife(int n)
-	{
+	// Create a random n x n GameOfLife
+	public GameOfLife(int n) {
 		State = new int[n][n];		
 		Random rand = new Random();
 		
@@ -17,8 +17,8 @@ public class GameOfLife
 		}
 	}
 	
-	public GameOfLife(int[][] initialState)
-	{
+	// Load a pre-defined state
+	public GameOfLife(int[][] initialState) {
 		State = initialState;
 	}
 	
@@ -28,8 +28,7 @@ public class GameOfLife
 	private static int CELL_ALIVE = 1;
 	private static int CELL_DEAD = 0;
 	
-	public void nextState()
-	{
+	public void nextState() {
 		// Created in new array so old state is not overwritten as we iterate
 		int[][] newState = new int[State.length][];
 		
@@ -47,18 +46,17 @@ public class GameOfLife
 		State = newState;
 	}
 	
-	public boolean isAlive(int x, int y)
-	{
+	public boolean isAlive(int x, int y) {
 		if(isValidIndex(x, y))
 			return State[y][x] == CELL_ALIVE;
 			
 		return false;
 	}
 	
-	private int liveNeighbours(int x, int y)
-	{
+	private int liveNeighbours(int x, int y) {
 		int aliveNeighbours = 0;
 		
+		// Loop through all neighbors
 		for(int xOffset = -1; xOffset <= 1; xOffset++)
 		{
 			for(int yOffset = -1; yOffset <= 1; yOffset++)
@@ -80,8 +78,7 @@ public class GameOfLife
 		return aliveNeighbours;
 	}
 	
-	private int getNextCellState(int currentCellState, int aliveNeighbours)
-	{
+	private int getNextCellState(int currentCellState, int aliveNeighbours) {
 		if(currentCellState == CELL_ALIVE && (aliveNeighbours < 2 || aliveNeighbours > 3))
 			return CELL_DEAD;
 		else if(currentCellState != CELL_ALIVE && aliveNeighbours == 3)
@@ -90,8 +87,7 @@ public class GameOfLife
 		return currentCellState;
 	}
 	
-	private boolean isValidIndex(int x, int y)
-	{
+	private boolean isValidIndex(int x, int y) {
 		return x >= 0 && y >= 0 && y < State.length && x < State[y].length; 
 	}
 }
